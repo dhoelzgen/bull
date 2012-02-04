@@ -2,15 +2,15 @@ if window["WebSocket"]
   
   $(document).ready ->
     server = null
+
     canvas = $("#game")
     context = canvas.get(0).getContext("2d")
     
     sendDirection = (direction) ->
-      server.send(JSON.stringify({'direction': direction})) if server
+      server.send(JSON.stringify({'action:direction': direction})) if server
 
     connect = ->
-      server = new io.Socket(host, { 'port': parseInt(port) })
-      server.connect()
+      server = io.connect(host, { 'port': parseInt(port) })
       
     connect()
     
@@ -22,27 +22,14 @@ if window["WebSocket"]
         when 39 then sendDirection "right"
         when 40 then sendDirection "down"
 
-    # TESTING ONLY
-
-    state = false
+    # Drawing
 
     resize = ->
       context.canvas.width = window.innerWidth
-      context.canvas.height = window.innerHeight - 120
+      context.canvas.height = window.innerHeight - 140
       redraw()
 
     $(window).resize resize
-
-    redraw = ->
-      if state
-        context.fillStyle = 'rgb(0,0,0)'
-      else
-        context.fillStyle = 'rgb(255,0,0)'
-
-      context.fillRect(0,0,30,30)
-      context.fillRect(canvas.width() - 30, 0, 30, 30)
-      context.fillRect(0, canvas.height() - 30, 30, 30)
-      context.fillRect(canvas.width() - 30, canvas.height() - 30, 30, 30)
 
     draw = ->
       redraw()
@@ -51,17 +38,12 @@ if window["WebSocket"]
         draw()
       , 33
 
-    flash =  ->
-      state = not state
-
-      window.setTimeout ->
-        flash(not state)
-      , 500
+    redraw = ->
+      context.fillStyle = 'rgb(0,0,0)'
+      context.fillRect(0,0,context.canvas.width,context.canvas.height)
 
     resize()
     draw()
-
-    flash()
             
 else
   alert "Your browser does not support websockets."

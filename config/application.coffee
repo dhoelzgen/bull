@@ -12,7 +12,11 @@ module.exports =
         dest: __dirname + '/../public'
         compress: true
 
-      server.use express.compiler( src: "#{__dirname}/../src/coffee/", dest: "#{__dirname}/../public", enable: ['coffeescript'] )
+      server.use express.compiler
+        src: "#{__dirname}/../src/coffee/"
+        dest: "#{__dirname}/../public"
+        enable: ['coffeescript']
+        
       server.use express.static(__dirname + '/../public')
       server.use express.logger()
       server.use express.errorHandler()
