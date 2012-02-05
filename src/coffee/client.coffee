@@ -3,6 +3,7 @@ if window['WebSocket']
   PIXEL_SIZE = 5
   COLOR_SELF = 'rgb(42,83,145)'
   COLOR_ENEMY = 'rgb(218,0,0)'
+  BULLET_COLOR = 'rgb(40,40,40)'
 
   $(document).ready ->
     server = null
@@ -13,6 +14,7 @@ if window['WebSocket']
     # Game data
 
     gameWorld = null
+    gameBullets = null
     gamePlayers = []
     gameId = null
 
@@ -40,6 +42,7 @@ if window['WebSocket']
 
         server.on 'game.step', (data) ->
           gamePlayers = data.players
+          gameBullets = data.bullets
 
         server.on 'game.init', (data) ->
           gameWorld = data.world
@@ -90,6 +93,7 @@ if window['WebSocket']
 
       drawMap()
       drawPlayer(player) for player in gamePlayers
+      drawBullets()
 
     drawPlayer = (player) ->
 
@@ -127,7 +131,12 @@ if window['WebSocket']
 
         context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE, PIXEL_SIZE * 1 , PIXEL_SIZE * 1)
         
-
+    
+    drawBullets = ->
+      context.fillStyle = BULLET_COLOR
+      for bullet in gameBullets
+        [bullet_x, bullet_y] = transformCoords(bullet.x, bullet.y)
+        context.fillRect(bullet_x, bullet_y, PIXEL_SIZE, PIXEL_SIZE)
 
     drawMap = ->
       context.fillStyle = 'rgb(0,0,0)'

@@ -36,6 +36,9 @@ module.exports = class
     return 1 if x < 0 or y < 0 or x > (@width - 1) or y > (@height - 1)
     return @world[x][y]
 
+  hit: (x, y) ->
+    return null
+
   nextSpawnPoint: ->
     x = parseInt(Math.random() * @width)
     y = 0

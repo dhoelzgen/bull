@@ -1,15 +1,17 @@
 (function() {
-  var COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
+  var BULLET_COLOR, COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
   if (window['WebSocket']) {
     PIXEL_SIZE = 5;
     COLOR_SELF = 'rgb(42,83,145)';
     COLOR_ENEMY = 'rgb(218,0,0)';
+    BULLET_COLOR = 'rgb(40,40,40)';
     $(document).ready(function() {
-      var cHeight, cWidth, canvas, connect, context, draw, drawMap, drawPlayer, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
+      var cHeight, cWidth, canvas, connect, context, draw, drawBullets, drawMap, drawPlayer, gameBullets, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
       server = null;
       canvas = $('#game');
       context = canvas.get(0).getContext('2d');
       gameWorld = null;
+      gameBullets = null;
       gamePlayers = [];
       gameId = null;
       cWidth = 0;
@@ -32,7 +34,8 @@
         });
         return server.on('connect', function() {
           server.on('game.step', function(data) {
-            return gamePlayers = data.players;
+            gamePlayers = data.players;
+            return gameBullets = data.bullets;
           });
           return server.on('game.init', function(data) {
             gameWorld = data.world;
@@ -80,7 +83,7 @@
         }
       });
       redraw = function() {
-        var player, _i, _len, _results;
+        var player, _i, _len;
         context.fillStyle = 'rgb(255,255,255)';
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         this.controlled = getPlayer();
@@ -94,12 +97,11 @@
         this.clippingWidth = parseInt(cWidth / PIXEL_SIZE);
         this.clippingHeight = parseInt(cHeight / PIXEL_SIZE);
         drawMap();
-        _results = [];
         for (_i = 0, _len = gamePlayers.length; _i < _len; _i++) {
           player = gamePlayers[_i];
-          _results.push(drawPlayer(player));
+          drawPlayer(player);
         }
-        return _results;
+        return drawBullets();
       };
       drawPlayer = function(player) {
         var distance, player_x, player_y, _ref;
@@ -142,6 +144,17 @@
           }
           return context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE, PIXEL_SIZE * 1, PIXEL_SIZE * 1);
         }
+      };
+      drawBullets = function() {
+        var bullet, bullet_x, bullet_y, _i, _len, _ref, _results;
+        context.fillStyle = BULLET_COLOR;
+        _results = [];
+        for (_i = 0, _len = gameBullets.length; _i < _len; _i++) {
+          bullet = gameBullets[_i];
+          _ref = transformCoords(bullet.x, bullet.y), bullet_x = _ref[0], bullet_y = _ref[1];
+          _results.push(context.fillRect(bullet_x, bullet_y, PIXEL_SIZE, PIXEL_SIZE));
+        }
+        return _results;
       };
       drawMap = function() {
         var h, realX, realY, w, _ref, _ref2, _results;

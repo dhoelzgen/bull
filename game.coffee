@@ -10,6 +10,7 @@ module.exports = class
 
   go: ->
     @world = new World 1500, 600
+    @bullets = []
 
     @io.sockets.on "connection", (client) =>
       @.addClient client
@@ -73,12 +74,59 @@ module.exports = class
 
   nextCycle: ->
     
-    # TODO: Calculate new state
+    # Move
 
     @.movePlayer player for player in @players
-    
 
-    # Emit current world state to clients
+    # Shoot
+
+    for player in @players
+      player.doStep()
+
+      if player.shooting and player.cooldown == 0
+        @bullets.push player.getBullet()
+    
+    # Die
+
+    checkCollision = (playerId, x,y) =>
+      if @world.get(x,y) == 1
+        @world.hit(x,y)
+        return true
+      else
+        for player in @players
+          if playerId isnt player.id
+            for i in [-1..1]
+              for j in [-1..1]
+                if player.x == (x + i) and player.y == (y + j)
+                  player.hit()
+                  return true
+
+      return false
+
+    remainingBullets = []
+
+    for bullet in @bullets
+      collision = false
+      if bullet.trajY == 0
+        for i in [bullet.x..(bullet.x + bullet.trajX)]
+          collision = true if checkCollision(bullet.playerId, i, bullet.y)
+      else
+        for i in [bullet.y..(bullet.y + bullet.trajY)]
+          collision = true if checkCollision(bullet.playerId, bullet.x, i)
+
+      remainingBullets.push( bullet ) unless collision
+
+    
+    bulletData = []
+
+    for bullet in remainingBullets
+      bullet.x += bullet.trajX
+      bullet.y += bullet.trajY
+      bulletData.push bullet.data()
+
+    @bullets = remainingBullets
+
+    # Tell
 
     playerData = []
 
@@ -87,6 +135,7 @@ module.exports = class
 
     @io.sockets.emit "game.step", {
       players: playerData
+      bullets: bulletData
     }
 
     setTimeout =>
