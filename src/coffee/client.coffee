@@ -100,22 +100,22 @@ if window['WebSocket']
 
       [player_x, player_y] = transformCoords(player.x, player.y)
 
-      context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE * 3, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
+      context.fillRect(player_x - PIXEL_SIZE * 2, player_y  - PIXEL_SIZE * 2, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
 
       # Draw fireing indicator
       if player.shooting
         if player.direction.shoot.up
-          context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE * 5, PIXEL_SIZE * 3 , PIXEL_SIZE)
-          context.fillRect(player_x, player_y  - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE)
+          context.fillRect(player_x - PIXEL_SIZE * 2, player_y  - PIXEL_SIZE * 4, PIXEL_SIZE * 3 , PIXEL_SIZE)
+          context.fillRect(player_x - PIXEL_SIZE * 1, player_y  - PIXEL_SIZE * 5, PIXEL_SIZE, PIXEL_SIZE)
         else if player.direction.shoot.down
-          context.fillRect(player_x - PIXEL_SIZE, player_y  + PIXEL_SIZE * 1, PIXEL_SIZE * 3 , PIXEL_SIZE)
-          context.fillRect(player_x, player_y  + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+          context.fillRect(player_x - PIXEL_SIZE * 2, player_y  + PIXEL_SIZE * 2, PIXEL_SIZE * 3 , PIXEL_SIZE)
+          context.fillRect(player_x - PIXEL_SIZE * 1, player_y  + PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE)
         else if player.direction.shoot.left
-          context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
-          context.fillRect(player_x - PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+          context.fillRect(player_x - PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE * 3)
+          context.fillRect(player_x - PIXEL_SIZE * 5, player_y - PIXEL_SIZE * 1, PIXEL_SIZE, PIXEL_SIZE)
         else if player.direction.shoot.right
-          context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
-          context.fillRect(player_x + PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+          context.fillRect(player_x + PIXEL_SIZE * 2, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE * 3)
+          context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 1, PIXEL_SIZE, PIXEL_SIZE)
 
 
     drawMap = ->

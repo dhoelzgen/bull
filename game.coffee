@@ -48,15 +48,30 @@ module.exports = class
       count: @players.length  
     }
 
+  movePlayer: (player) ->
+    newX = player.x
+    newY = player.y
+
+    if player.move.up then newY -= 1
+    if player.move.left  then newX -= 1
+    if player.move.right  then newX += 1
+    if player.move.down  then newY += 1
+
+    free = true
+    free = false if @world.get( newX, newY ) == 1
+
+    for other in @players
+      free = false if other.x == newX and other.y == newY
+
+    if free
+      player.x = newX
+      player.y = newY
+
   nextCycle: ->
     
     # TODO: Calculate new state
 
-    for player in @players
-      if player.move.up then player.y -= 1
-      if player.move.left  then player.x -= 1
-      if player.move.right  then player.x += 1
-      if player.move.down  then player.y += 1
+    @.movePlayer player for player in @players
     
 
     # Emit current world state to clients

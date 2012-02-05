@@ -23,6 +23,9 @@ module.exports = class
   data: ->
     return @world
 
+  get: (x, y) ->
+    return @world[x][y]
+
   nextSpawnPoint: ->
     x = parseInt(Math.random() * @width)
     y = 0
