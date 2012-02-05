@@ -16,7 +16,7 @@ module.exports =
         src: "#{__dirname}/../src/coffee/"
         dest: "#{__dirname}/../public"
         enable: ['coffeescript']
-        
+
       server.use express.static(__dirname + '/../public')
       server.use express.logger()
       server.use express.errorHandler()

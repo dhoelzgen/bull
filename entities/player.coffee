@@ -1,8 +1,14 @@
 module.exports = class
-  constructor: (@client) ->
-    console.log "Hello"
-    return
+  constructor: (@id, @client, @x, @y) ->
+    @direction = 'stop'
+    @disconnected = false
 
-  disconnect: ->
-    console.log "Goodbye"
-    return
+  data: ->
+    return {
+      id: @id
+      x: @x
+      y: @y
+    }
+
+  setDirection: (direction) ->
+    @direction = direction

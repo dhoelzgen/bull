@@ -20,7 +20,7 @@ application.expressConfig(express, server)
   
 ### Handle Connections ###
 
-socket = io.listen server
+socket = io.listen server, { 'log level': 1 }
 game = new Game(socket)
 
 server.get '/', (req, res) ->
