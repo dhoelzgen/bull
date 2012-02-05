@@ -18,11 +18,11 @@ module.exports = class
     @.nextCycle()
 
   addClient: (client) ->
-    pos = @world.nextSpawnPoint()
+    [x, y] = @world.nextSpawnPoint()
     id = @nextId
     @nextId += 1
 
-    player = new Player id, client, pos.x, pos.y
+    player = new Player id, client, x, y
 
     @players.push player
 
@@ -50,6 +50,7 @@ module.exports = class
     }
 
   movePlayer: (player) ->
+
     newX = player.x
     newY = player.y
 
@@ -72,16 +73,23 @@ module.exports = class
       player.x = newX
       player.y = newY
 
+  resurrectPlayer: (player) ->
+    if player.cooldown == 0
+      [x, y] = @world.nextSpawnPoint()
+      player.resurrect x, y
+
   nextCycle: ->
     
-    # Move
-
-    @.movePlayer player for player in @players
-
-    # Shoot
+    # Move & Shoot
 
     for player in @players
       player.doStep()
+
+      if player.dead
+        @.resurrectPlayer player
+      else
+        @.movePlayer player
+
 
       if player.shooting and player.cooldown == 0
         @bullets.push player.getBullet()

@@ -2,6 +2,7 @@ Bullet = require('./bullet')
 
 COOLDOWN = 7
 BULLET_SPEED = 2
+HITPOINTS = 5
 
 module.exports = class
   constructor: (@id, @client, @x, @y) ->
@@ -20,7 +21,8 @@ module.exports = class
     }
 
     @shooting = false
-    @disconnected = false
+    @dead = false
+    @hitpoints = HITPOINTS
 
     @cooldown = 0
 
@@ -37,11 +39,23 @@ module.exports = class
       shooting: @shooting
       x: @x
       y: @y
+      dead: @dead
       cooldown: @cooldown
     }
 
   hit: ->
-    return null
+    @hitpoints -= 1
+    @.die() if @hitpoints == 0
+
+  die: ->
+    @dead = true
+    @cooldown = 50
+
+  resurrect: (x,y) ->
+    @x = x
+    @y = y
+    @hitpoints = HITPOINTS
+    @dead = false
 
   getBullet: ->
     bX = @x

@@ -1,9 +1,10 @@
 (function() {
-  var BULLET_COLOR, COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
+  var BULLET_COLOR, COLOR_DEAD, COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
   if (window['WebSocket']) {
     PIXEL_SIZE = 5;
     COLOR_SELF = 'rgb(42,83,145)';
     COLOR_ENEMY = 'rgb(218,0,0)';
+    COLOR_DEAD = 'rgb(150,150,150)';
     BULLET_COLOR = 'rgb(40,40,40)';
     $(document).ready(function() {
       var cHeight, cWidth, canvas, connect, context, draw, drawBullets, drawMap, drawPlayer, gameBullets, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
@@ -105,10 +106,14 @@
       };
       drawPlayer = function(player) {
         var distance, player_x, player_y, _ref;
-        if (player === this.controlled) {
-          context.fillStyle = COLOR_SELF;
+        if (player.dead) {
+          context.fillStyle = COLOR_DEAD;
         } else {
-          context.fillStyle = COLOR_ENEMY;
+          if (player === this.controlled) {
+            context.fillStyle = COLOR_SELF;
+          } else {
+            context.fillStyle = COLOR_ENEMY;
+          }
         }
         _ref = transformCoords(player.x, player.y), player_x = _ref[0], player_y = _ref[1];
         if (player.x > this.clippingX && player.x < (this.clippingX + this.clippingWidth) && player.y > this.clippingY && player.y < (this.clippingY + this.clippingHeight)) {

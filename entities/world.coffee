@@ -48,4 +48,4 @@ module.exports = class
 
     y += 20
 
-    return { x: x, y: y }
+    return [x, y]

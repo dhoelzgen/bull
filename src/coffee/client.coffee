@@ -3,6 +3,7 @@ if window['WebSocket']
   PIXEL_SIZE = 5
   COLOR_SELF = 'rgb(42,83,145)'
   COLOR_ENEMY = 'rgb(218,0,0)'
+  COLOR_DEAD = 'rgb(150,150,150)'
   BULLET_COLOR = 'rgb(40,40,40)'
 
   $(document).ready ->
@@ -97,10 +98,13 @@ if window['WebSocket']
 
     drawPlayer = (player) ->
 
-      if player is @controlled
-        context.fillStyle = COLOR_SELF
+      if player.dead
+        context.fillStyle = COLOR_DEAD
       else
-        context.fillStyle = COLOR_ENEMY
+        if player is @controlled
+          context.fillStyle = COLOR_SELF
+        else
+          context.fillStyle = COLOR_ENEMY
 
       [player_x, player_y] = transformCoords(player.x, player.y)
 
