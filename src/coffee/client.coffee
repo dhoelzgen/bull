@@ -152,7 +152,7 @@ if window['WebSocket']
         realY = 0
         for h in [clippingY..(clippingY + clippingHeight)]
           unless w < 0 or h < 0 or w > (gameWorld.length - 1) or h > (gameWorld[0].length - 1)
-            if gameWorld[w][h] == 1
+            if gameWorld[w][h] > 0
               context.fillRect(realX,realY,PIXEL_SIZE, PIXEL_SIZE)
           
           realY += PIXEL_SIZE

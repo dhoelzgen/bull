@@ -9,7 +9,7 @@ module.exports = class
     @nextId = 1
 
   go: ->
-    @world = new World 1500, 600
+    @world = new World 1500, 1000
     @bullets = []
 
     @io.sockets.on "connection", (client) =>
@@ -63,7 +63,7 @@ module.exports = class
     
     for i in [-1..1]
       for j in [-1..1]
-        free = false if @world.get( newX + i, newY + j) == 1
+        free = false if @world.get( newX + i, newY + j) > 0
 
     for other in @players
       unless other is player
@@ -97,7 +97,7 @@ module.exports = class
     # Die
 
     checkCollision = (playerId, x,y) =>
-      if @world.get(x,y) == 1
+      if @world.get(x,y) > 0
         @world.hit(x,y)
         return true
       else

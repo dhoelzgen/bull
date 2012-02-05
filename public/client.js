@@ -178,7 +178,7 @@
           realY = 0;
           for (h = clippingY, _ref2 = clippingY + clippingHeight; clippingY <= _ref2 ? h <= _ref2 : h >= _ref2; clippingY <= _ref2 ? h++ : h--) {
             if (!(w < 0 || h < 0 || w > (gameWorld.length - 1) || h > (gameWorld[0].length - 1))) {
-              if (gameWorld[w][h] === 1) {
+              if (gameWorld[w][h] > 0) {
                 context.fillRect(realX, realY, PIXEL_SIZE, PIXEL_SIZE);
               }
             }
