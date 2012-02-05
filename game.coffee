@@ -25,8 +25,17 @@ module.exports = class
 
     @players.push player
 
-    client.on "action.direction", (direction) ->
-      player.setDirection direction
+    client.on "action.move", (direction) ->
+      player.addMoveDirection direction
+
+    client.on "action.stop", (direction) ->
+      player.removeMoveDirection direction
+
+    client.on "action.shoot", ->
+      player.startShooting()
+
+    client.on "action.stopShooting", ->
+      player.stopShooting()
 
     client.on "disconnect", =>
       @players.remove(player)
@@ -43,6 +52,11 @@ module.exports = class
     
     # TODO: Calculate new state
 
+    for player in @players
+      if player.move.up then player.y -= 1
+      if player.move.left  then player.x -= 1
+      if player.move.right  then player.x += 1
+      if player.move.down  then player.y += 1
     
 
     # Emit current world state to clients

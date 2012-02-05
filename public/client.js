@@ -1,9 +1,9 @@
 (function() {
   var PIXEL_SIZE;
   if (window['WebSocket']) {
-    PIXEL_SIZE = 5;
+    PIXEL_SIZE = 4;
     $(document).ready(function() {
-      var cHeight, cWidth, canvas, connect, context, draw, drawMap, drawPlayer, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendDirection, server;
+      var cHeight, cWidth, canvas, connect, context, draw, drawMap, drawPlayer, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server;
       server = null;
       canvas = $('#game');
       context = canvas.get(0).getContext('2d');
@@ -12,8 +12,17 @@
       gameId = null;
       cWidth = 0;
       cHeight = 0;
-      sendDirection = function(direction) {
-        return server.emit('action.direction', direction);
+      sendMove = function(direction) {
+        return server.emit('action.move', direction);
+      };
+      sendStop = function(direction) {
+        return server.emit('action.stop', direction);
+      };
+      sendShoot = function() {
+        return server.emit('action.shoot', null);
+      };
+      sendStopShooting = function() {
+        return server.emit('action.stopShooting', null);
       };
       connect = function() {
         server = io.connect(host, {
@@ -39,24 +48,45 @@
         key = event.keyCode ? event.keyCode : event.which;
         switch (key) {
           case 37:
-            return sendDirection('left');
+            return sendMove('left');
           case 38:
-            return sendDirection('up');
+            return sendMove('up');
           case 39:
-            return sendDirection('right');
+            return sendMove('right');
           case 40:
-            return sendDirection('down');
+            return sendMove('down');
+          case 32:
+            return sendShoot();
+        }
+      });
+      $(document).keyup(function(event) {
+        var key;
+        if (!server) {
+          return;
+        }
+        key = event.keyCode ? event.keyCode : event.which;
+        switch (key) {
+          case 37:
+            return sendStop('left');
+          case 38:
+            return sendStop('up');
+          case 39:
+            return sendStop('right');
+          case 40:
+            return sendStop('down');
+          case 32:
+            return sendStopShooting();
         }
       });
       redraw = function() {
-        context.fillStyle = 'rgb(0,0,0)';
+        context.fillStyle = 'rgb(255,255,255)';
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         this.player = getPlayer();
         if (!this.player) {
           return;
         }
-        this.realPlayerX = parseInt(cWidth / 2);
-        this.realPlayerY = parseInt(cHeight / 2);
+        this.realPlayerX = parseInt(cWidth / 2) - parseInt(cWidth / 2 % PIXEL_SIZE);
+        this.realPlayerY = parseInt(cHeight / 2) - parseInt(cHeight / 2 % PIXEL_SIZE);
         this.clippingX = player.x - parseInt(cWidth / (2 * PIXEL_SIZE));
         this.clippingY = player.y - parseInt(cHeight / (2 * PIXEL_SIZE));
         this.clippingWidth = parseInt(cWidth / PIXEL_SIZE);
@@ -66,11 +96,26 @@
       };
       drawPlayer = function() {
         context.fillStyle = 'rgb(255,0,0)';
-        return context.fillRect(this.realPlayerX, this.realPlayerY, PIXEL_SIZE, PIXEL_SIZE);
+        context.fillRect(this.realPlayerX - PIXEL_SIZE, this.realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
+        if (this.player.shooting) {
+          if (this.player.direction.shoot.up) {
+            context.fillRect(this.realPlayerX - PIXEL_SIZE, this.realPlayerY - PIXEL_SIZE * 5, PIXEL_SIZE * 3, PIXEL_SIZE);
+            return context.fillRect(this.realPlayerX, this.realPlayerY - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE);
+          } else if (this.player.direction.shoot.down) {
+            context.fillRect(this.realPlayerX - PIXEL_SIZE, this.realPlayerY + PIXEL_SIZE * 1, PIXEL_SIZE * 3, PIXEL_SIZE);
+            return context.fillRect(this.realPlayerX, this.realPlayerY + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
+          } else if (this.player.direction.shoot.left) {
+            context.fillRect(this.realPlayerX - PIXEL_SIZE * 3, this.realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3);
+            return context.fillRect(this.realPlayerX - PIXEL_SIZE * 4, this.realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
+          } else if (this.player.direction.shoot.right) {
+            context.fillRect(this.realPlayerX + PIXEL_SIZE * 3, this.realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3);
+            return context.fillRect(this.realPlayerX + PIXEL_SIZE * 4, this.realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
+          }
+        }
       };
       drawMap = function() {
         var h, realX, realY, w, _ref, _ref2, _results;
-        context.fillStyle = 'rgb(255,255,255)';
+        context.fillStyle = 'rgb(0,0,0)';
         realX = 0;
         _results = [];
         for (w = clippingX, _ref = clippingX + clippingWidth; clippingX <= _ref ? w <= _ref : w >= _ref; clippingX <= _ref ? w++ : w--) {

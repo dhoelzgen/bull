@@ -1,6 +1,6 @@
 if window['WebSocket']
   
-  PIXEL_SIZE = 5
+  PIXEL_SIZE = 4
 
   $(document).ready ->
     server = null
@@ -19,8 +19,17 @@ if window['WebSocket']
     cWidth = 0
     cHeight = 0
     
-    sendDirection = (direction) ->
-      server.emit('action.direction', direction)
+    sendMove = (direction) ->
+      server.emit('action.move', direction)
+
+    sendStop = (direction) ->
+      server.emit('action.stop', direction)
+
+    sendShoot = ->
+      server.emit('action.shoot', null)
+
+    sendStopShooting = ->
+      server.emit('action.stopShooting', null)
 
     connect = ->
       server = io.connect(host, { 'port': parseInt(port) })
@@ -41,16 +50,27 @@ if window['WebSocket']
       return unless server
       key = if event.keyCode then event.keyCode else event.which
       switch key
-        when 37 then sendDirection 'left'
-        when 38 then sendDirection 'up'
-        when 39 then sendDirection 'right'
-        when 40 then sendDirection 'down'
+        when 37 then sendMove 'left'
+        when 38 then sendMove 'up'
+        when 39 then sendMove 'right'
+        when 40 then sendMove 'down'
+        when 32 then sendShoot()
+
+    $(document).keyup (event) ->
+      return unless server
+      key = if event.keyCode then event.keyCode else event.which
+      switch key
+        when 37 then sendStop 'left'
+        when 38 then sendStop 'up'
+        when 39 then sendStop 'right'
+        when 40 then sendStop 'down'
+        when 32 then sendStopShooting()
 
     # Drawing
 
     redraw = ->
       # Clear rect
-      context.fillStyle = 'rgb(0,0,0)'
+      context.fillStyle = 'rgb(255,255,255)'
       context.fillRect(0,0,context.canvas.width,context.canvas.height)
 
       @player = getPlayer()
@@ -58,8 +78,8 @@ if window['WebSocket']
 
       # Set clipping
 
-      @realPlayerX = parseInt(cWidth / 2)
-      @realPlayerY = parseInt(cHeight / 2)
+      @realPlayerX = parseInt(cWidth / 2) - parseInt(cWidth / 2 % PIXEL_SIZE)
+      @realPlayerY = parseInt(cHeight / 2) - parseInt(cHeight / 2 % PIXEL_SIZE)
 
       @clippingX = player.x - parseInt(cWidth / (2 * PIXEL_SIZE))
       @clippingY = player.y - parseInt(cHeight / (2 * PIXEL_SIZE))
@@ -72,10 +92,26 @@ if window['WebSocket']
 
     drawPlayer =  ->
       context.fillStyle = 'rgb(255,0,0)'
-      context.fillRect(@realPlayerX, @realPlayerY, PIXEL_SIZE, PIXEL_SIZE)
-    
+      context.fillRect(@realPlayerX - PIXEL_SIZE, @realPlayerY  - PIXEL_SIZE * 3, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
+
+      # Draw fireing indicator
+      if @player.shooting
+        if @player.direction.shoot.up
+          context.fillRect(@realPlayerX - PIXEL_SIZE, @realPlayerY  - PIXEL_SIZE * 5, PIXEL_SIZE * 3 , PIXEL_SIZE)
+          context.fillRect(@realPlayerX, @realPlayerY  - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE)
+        else if @player.direction.shoot.down
+          context.fillRect(@realPlayerX - PIXEL_SIZE, @realPlayerY  + PIXEL_SIZE * 1, PIXEL_SIZE * 3 , PIXEL_SIZE)
+          context.fillRect(@realPlayerX, @realPlayerY  + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+        else if @player.direction.shoot.left
+          context.fillRect(@realPlayerX - PIXEL_SIZE * 3, @realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
+          context.fillRect(@realPlayerX - PIXEL_SIZE * 4, @realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+        else if @player.direction.shoot.right
+          context.fillRect(@realPlayerX + PIXEL_SIZE * 3, @realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
+          context.fillRect(@realPlayerX + PIXEL_SIZE * 4, @realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+
+
     drawMap = ->
-      context.fillStyle = 'rgb(255,255,255)'
+      context.fillStyle = 'rgb(0,0,0)'
       realX = 0
 
       for w in [clippingX..(clippingX + clippingWidth)]

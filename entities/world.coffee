@@ -16,9 +16,9 @@ module.exports = class
       for h in [0..height-1]
 
         if h > randomHeight
-          @world[w][h] = 0
-        else
           @world[w][h] = 1
+        else
+          @world[w][h] = 0
 
   data: ->
     return @world
@@ -27,7 +27,9 @@ module.exports = class
     x = parseInt(Math.random() * @width)
     y = 0
 
-    while @world[x][y] isnt 0
+    while @world[x][y] isnt 1
       y += 1
+
+    y -= 20
 
     return { x: x, y: y }
