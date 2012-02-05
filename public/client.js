@@ -1,11 +1,13 @@
 (function() {
-  var BULLET_COLOR, COLOR_DEAD, COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
+  var COLOR_BULLET, COLOR_CLEAN, COLOR_DEAD, COLOR_ENEMY, COLOR_OBSTACLE, COLOR_SELF, PIXEL_SIZE;
   if (window['WebSocket']) {
     PIXEL_SIZE = 5;
-    COLOR_SELF = 'rgb(42,83,145)';
-    COLOR_ENEMY = 'rgb(218,0,0)';
-    COLOR_DEAD = 'rgb(150,150,150)';
-    BULLET_COLOR = 'rgb(40,40,40)';
+    COLOR_SELF = '#3d700a';
+    COLOR_ENEMY = '#498d05';
+    COLOR_DEAD = '#253008';
+    COLOR_BULLET = '#3d700a';
+    COLOR_OBSTACLE = '#253008';
+    COLOR_CLEAN = '#304818';
     $(document).ready(function() {
       var cHeight, cWidth, canvas, connect, context, draw, drawBullets, drawMap, drawPlayer, gameBullets, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
       server = null;
@@ -93,7 +95,7 @@
       });
       redraw = function() {
         var player, _i, _len;
-        context.fillStyle = 'rgb(255,255,255)';
+        context.fillStyle = COLOR_CLEAN;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         this.controlled = getPlayer();
         if (!this.controlled) {
@@ -160,7 +162,7 @@
       };
       drawBullets = function() {
         var bullet, bullet_x, bullet_y, _i, _len, _ref, _results;
-        context.fillStyle = BULLET_COLOR;
+        context.fillStyle = COLOR_BULLET;
         _results = [];
         for (_i = 0, _len = gameBullets.length; _i < _len; _i++) {
           bullet = gameBullets[_i];
@@ -171,7 +173,7 @@
       };
       drawMap = function() {
         var h, realX, realY, w, _ref, _ref2, _results;
-        context.fillStyle = 'rgb(0,0,0)';
+        context.fillStyle = COLOR_OBSTACLE;
         realX = 0;
         _results = [];
         for (w = clippingX, _ref = clippingX + clippingWidth; clippingX <= _ref ? w <= _ref : w >= _ref; clippingX <= _ref ? w++ : w--) {
@@ -190,7 +192,7 @@
       };
       resize = function() {
         context.canvas.width = window.innerWidth;
-        context.canvas.height = window.innerHeight - 140;
+        context.canvas.height = window.innerHeight - 100;
         cWidth = context.canvas.width;
         cHeight = context.canvas.height;
         return redraw();

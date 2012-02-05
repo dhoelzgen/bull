@@ -9,7 +9,7 @@ module.exports = class
     @nextId = 1
 
   go: ->
-    @world = new World 1500, 1000
+    @world = new World 750, 750
     @bullets = []
 
     @io.sockets.on "connection", (client) =>

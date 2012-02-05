@@ -1,4 +1,4 @@
-BLOCK_HITPOINTS = 3
+BLOCK_HITPOINTS = 1
 TEMP_HITPOINTS = 137612537
 
 module.exports = class
@@ -18,8 +18,8 @@ module.exports = class
     for i in [1..300]
       oX = parseInt(Math.random() * @width) 
       oY = parseInt(Math.random() * @height)
-      eX = parseInt(Math.random() * 90)  + 60 + oX
-      eY = parseInt(Math.random() * 90) + 60 + oY
+      eX = parseInt(Math.random() * 40)  + 60 + oX
+      eY = parseInt(Math.random() * 40) + 60 + oY
 
       oX = 0 if oX < 0
       oY = 0 if oY < 0

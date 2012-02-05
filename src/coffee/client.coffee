@@ -1,10 +1,13 @@
 if window['WebSocket']
   
   PIXEL_SIZE = 5
-  COLOR_SELF = 'rgb(42,83,145)'
-  COLOR_ENEMY = 'rgb(218,0,0)'
-  COLOR_DEAD = 'rgb(150,150,150)'
-  BULLET_COLOR = 'rgb(40,40,40)'
+
+  COLOR_SELF = '#3d700a'
+  COLOR_ENEMY = '#498d05'
+  COLOR_DEAD = '#253008'
+  COLOR_BULLET = '#3d700a'
+  COLOR_OBSTACLE = '#253008'
+  COLOR_CLEAN = '#304818'
 
   $(document).ready ->
     server = null
@@ -77,7 +80,7 @@ if window['WebSocket']
 
     redraw = ->
       # Clear rect
-      context.fillStyle = 'rgb(255,255,255)'
+      context.fillStyle = COLOR_CLEAN
       context.fillRect(0,0,context.canvas.width,context.canvas.height)
 
       @controlled = getPlayer()
@@ -139,13 +142,13 @@ if window['WebSocket']
         
     
     drawBullets = ->
-      context.fillStyle = BULLET_COLOR
+      context.fillStyle = COLOR_BULLET
       for bullet in gameBullets
         [bullet_x, bullet_y] = transformCoords(bullet.x, bullet.y)
         context.fillRect(bullet_x, bullet_y, PIXEL_SIZE, PIXEL_SIZE)
 
     drawMap = ->
-      context.fillStyle = 'rgb(0,0,0)'
+      context.fillStyle = COLOR_OBSTACLE
       realX = 0
 
       for w in [clippingX..(clippingX + clippingWidth)]
@@ -164,7 +167,7 @@ if window['WebSocket']
     
     resize = ->
       context.canvas.width = window.innerWidth
-      context.canvas.height = window.innerHeight - 140
+      context.canvas.height = window.innerHeight - 100
       cWidth = context.canvas.width
       cHeight = context.canvas.height
       redraw()
