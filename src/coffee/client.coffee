@@ -100,7 +100,7 @@ if window['WebSocket']
 
       [player_x, player_y] = transformCoords(player.x, player.y)
 
-      if player_x > @clippingX and player_x < (@clippingX + @clippingWidth) and player_y > @clippingY and player_y < (@clippingY + @clippingHeight)
+      if player.x > @clippingX and player.x < (@clippingX + @clippingWidth) and player.y > @clippingY and player.y < (@clippingY + @clippingHeight)
         context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
 
         # Draw fireing indicator
@@ -119,6 +119,12 @@ if window['WebSocket']
             context.fillRect(player_x + PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE)
       
       else
+        distance = 2 * PIXEL_SIZE
+        player_x = distance if player.x < @clippingX 
+        player_x = cWidth - distance if player.x > (@clippingX + @clippingWidth)
+        player_y = distance if player.y < @clippingY
+        player_y = cHeight - distance if player.y > (@clippingY + @clippingHeight)
+
         context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE, PIXEL_SIZE * 1 , PIXEL_SIZE * 1)
         
 

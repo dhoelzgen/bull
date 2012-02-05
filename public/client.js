@@ -102,28 +102,45 @@
         return _results;
       };
       drawPlayer = function(player) {
-        var player_x, player_y, _ref;
+        var distance, player_x, player_y, _ref;
         if (player === this.controlled) {
           context.fillStyle = COLOR_SELF;
         } else {
           context.fillStyle = COLOR_ENEMY;
         }
         _ref = transformCoords(player.x, player.y), player_x = _ref[0], player_y = _ref[1];
-        context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
-        if (player.shooting) {
-          if (player.direction.shoot.up) {
-            context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE);
-            return context.fillRect(player_x, player_y - PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE);
-          } else if (player.direction.shoot.down) {
-            context.fillRect(player_x - PIXEL_SIZE, player_y + PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE);
-            return context.fillRect(player_x, player_y + PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE);
-          } else if (player.direction.shoot.left) {
-            context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3);
-            return context.fillRect(player_x - PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE);
-          } else if (player.direction.shoot.right) {
-            context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3);
-            return context.fillRect(player_x + PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE);
+        if (player.x > this.clippingX && player.x < (this.clippingX + this.clippingWidth) && player.y > this.clippingY && player.y < (this.clippingY + this.clippingHeight)) {
+          context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
+          if (player.shooting) {
+            if (player.direction.shoot.up) {
+              context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE);
+              return context.fillRect(player_x, player_y - PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE);
+            } else if (player.direction.shoot.down) {
+              context.fillRect(player_x - PIXEL_SIZE, player_y + PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE);
+              return context.fillRect(player_x, player_y + PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE);
+            } else if (player.direction.shoot.left) {
+              context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3);
+              return context.fillRect(player_x - PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE);
+            } else if (player.direction.shoot.right) {
+              context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3);
+              return context.fillRect(player_x + PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE);
+            }
           }
+        } else {
+          distance = 2 * PIXEL_SIZE;
+          if (player.x < this.clippingX) {
+            player_x = distance;
+          }
+          if (player.x > (this.clippingX + this.clippingWidth)) {
+            player_x = cWidth - distance;
+          }
+          if (player.y < this.clippingY) {
+            player_y = distance;
+          }
+          if (player.y > (this.clippingY + this.clippingHeight)) {
+            player_y = cHeight - distance;
+          }
+          return context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE, PIXEL_SIZE * 1, PIXEL_SIZE * 1);
         }
       };
       drawMap = function() {
