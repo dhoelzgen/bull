@@ -1,6 +1,8 @@
 if window['WebSocket']
   
   PIXEL_SIZE = 4
+  COLOR_SELF = 'rgb(42,83,145)'
+  COLOR_ENEMY = 'rgb(218,0,0)'
 
   $(document).ready ->
     server = null
@@ -41,7 +43,6 @@ if window['WebSocket']
 
         server.on 'game.init', (data) ->
           gameWorld = data.world
-          window.world = data.world
           gameId = data.id
       
     connect()
@@ -73,41 +74,48 @@ if window['WebSocket']
       context.fillStyle = 'rgb(255,255,255)'
       context.fillRect(0,0,context.canvas.width,context.canvas.height)
 
-      @player = getPlayer()
-      return unless @player
+      @controlled = getPlayer()
+      return unless @controlled
 
       # Set clipping
 
-      @realPlayerX = parseInt(cWidth / 2) - parseInt(cWidth / 2 % PIXEL_SIZE)
-      @realPlayerY = parseInt(cHeight / 2) - parseInt(cHeight / 2 % PIXEL_SIZE)
+      @relativeX = parseInt(cWidth / 2) - parseInt(cWidth / 2 % PIXEL_SIZE)
+      @relativeY = parseInt(cHeight / 2) - parseInt(cHeight / 2 % PIXEL_SIZE)
 
-      @clippingX = player.x - parseInt(cWidth / (2 * PIXEL_SIZE))
-      @clippingY = player.y - parseInt(cHeight / (2 * PIXEL_SIZE))
+      @clippingX = @controlled.x - parseInt(cWidth / (2 * PIXEL_SIZE))
+      @clippingY = @controlled.y - parseInt(cHeight / (2 * PIXEL_SIZE))
 
       @clippingWidth = parseInt(cWidth / PIXEL_SIZE)
       @clippingHeight = parseInt(cHeight / PIXEL_SIZE)
 
       drawMap()
-      drawPlayer()
+      drawPlayer(player) for player in gamePlayers
 
-    drawPlayer =  ->
-      context.fillStyle = 'rgb(255,0,0)'
-      context.fillRect(@realPlayerX - PIXEL_SIZE, @realPlayerY  - PIXEL_SIZE * 3, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
+    drawPlayer = (player) ->
+
+      if player is @controlled
+        context.fillStyle = COLOR_SELF
+      else
+        context.fillStyle = COLOR_ENEMY
+
+      [player_x, player_y] = transformCoords(player.x, player.y)
+
+      context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE * 3, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
 
       # Draw fireing indicator
-      if @player.shooting
-        if @player.direction.shoot.up
-          context.fillRect(@realPlayerX - PIXEL_SIZE, @realPlayerY  - PIXEL_SIZE * 5, PIXEL_SIZE * 3 , PIXEL_SIZE)
-          context.fillRect(@realPlayerX, @realPlayerY  - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE)
-        else if @player.direction.shoot.down
-          context.fillRect(@realPlayerX - PIXEL_SIZE, @realPlayerY  + PIXEL_SIZE * 1, PIXEL_SIZE * 3 , PIXEL_SIZE)
-          context.fillRect(@realPlayerX, @realPlayerY  + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
-        else if @player.direction.shoot.left
-          context.fillRect(@realPlayerX - PIXEL_SIZE * 3, @realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
-          context.fillRect(@realPlayerX - PIXEL_SIZE * 4, @realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
-        else if @player.direction.shoot.right
-          context.fillRect(@realPlayerX + PIXEL_SIZE * 3, @realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
-          context.fillRect(@realPlayerX + PIXEL_SIZE * 4, @realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+      if player.shooting
+        if player.direction.shoot.up
+          context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE * 5, PIXEL_SIZE * 3 , PIXEL_SIZE)
+          context.fillRect(player_x, player_y  - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE)
+        else if player.direction.shoot.down
+          context.fillRect(player_x - PIXEL_SIZE, player_y  + PIXEL_SIZE * 1, PIXEL_SIZE * 3 , PIXEL_SIZE)
+          context.fillRect(player_x, player_y  + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+        else if player.direction.shoot.left
+          context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
+          context.fillRect(player_x - PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
+        else if player.direction.shoot.right
+          context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3)
+          context.fillRect(player_x + PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE)
 
 
     drawMap = ->
@@ -151,6 +159,12 @@ if window['WebSocket']
         return player if player.id == gameId
       
       return null
+
+    transformCoords = (x,y) ->
+      tx = ((x - @controlled.x) * PIXEL_SIZE) + @relativeX
+      ty = ((y - @controlled.y) * PIXEL_SIZE) + @relativeY
+      return [tx, ty]
+
 
     # Init
 

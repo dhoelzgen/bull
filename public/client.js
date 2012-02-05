@@ -1,9 +1,11 @@
 (function() {
-  var PIXEL_SIZE;
+  var COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
   if (window['WebSocket']) {
     PIXEL_SIZE = 4;
+    COLOR_SELF = 'rgb(42,83,145)';
+    COLOR_ENEMY = 'rgb(218,0,0)';
     $(document).ready(function() {
-      var cHeight, cWidth, canvas, connect, context, draw, drawMap, drawPlayer, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server;
+      var cHeight, cWidth, canvas, connect, context, draw, drawMap, drawPlayer, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
       server = null;
       canvas = $('#game');
       context = canvas.get(0).getContext('2d');
@@ -34,7 +36,6 @@
           });
           return server.on('game.init', function(data) {
             gameWorld = data.world;
-            window.world = data.world;
             return gameId = data.id;
           });
         });
@@ -79,37 +80,49 @@
         }
       });
       redraw = function() {
+        var player, _i, _len, _results;
         context.fillStyle = 'rgb(255,255,255)';
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-        this.player = getPlayer();
-        if (!this.player) {
+        this.controlled = getPlayer();
+        if (!this.controlled) {
           return;
         }
-        this.realPlayerX = parseInt(cWidth / 2) - parseInt(cWidth / 2 % PIXEL_SIZE);
-        this.realPlayerY = parseInt(cHeight / 2) - parseInt(cHeight / 2 % PIXEL_SIZE);
-        this.clippingX = player.x - parseInt(cWidth / (2 * PIXEL_SIZE));
-        this.clippingY = player.y - parseInt(cHeight / (2 * PIXEL_SIZE));
+        this.relativeX = parseInt(cWidth / 2) - parseInt(cWidth / 2 % PIXEL_SIZE);
+        this.relativeY = parseInt(cHeight / 2) - parseInt(cHeight / 2 % PIXEL_SIZE);
+        this.clippingX = this.controlled.x - parseInt(cWidth / (2 * PIXEL_SIZE));
+        this.clippingY = this.controlled.y - parseInt(cHeight / (2 * PIXEL_SIZE));
         this.clippingWidth = parseInt(cWidth / PIXEL_SIZE);
         this.clippingHeight = parseInt(cHeight / PIXEL_SIZE);
         drawMap();
-        return drawPlayer();
+        _results = [];
+        for (_i = 0, _len = gamePlayers.length; _i < _len; _i++) {
+          player = gamePlayers[_i];
+          _results.push(drawPlayer(player));
+        }
+        return _results;
       };
-      drawPlayer = function() {
-        context.fillStyle = 'rgb(255,0,0)';
-        context.fillRect(this.realPlayerX - PIXEL_SIZE, this.realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
-        if (this.player.shooting) {
-          if (this.player.direction.shoot.up) {
-            context.fillRect(this.realPlayerX - PIXEL_SIZE, this.realPlayerY - PIXEL_SIZE * 5, PIXEL_SIZE * 3, PIXEL_SIZE);
-            return context.fillRect(this.realPlayerX, this.realPlayerY - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE);
-          } else if (this.player.direction.shoot.down) {
-            context.fillRect(this.realPlayerX - PIXEL_SIZE, this.realPlayerY + PIXEL_SIZE * 1, PIXEL_SIZE * 3, PIXEL_SIZE);
-            return context.fillRect(this.realPlayerX, this.realPlayerY + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
-          } else if (this.player.direction.shoot.left) {
-            context.fillRect(this.realPlayerX - PIXEL_SIZE * 3, this.realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3);
-            return context.fillRect(this.realPlayerX - PIXEL_SIZE * 4, this.realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
-          } else if (this.player.direction.shoot.right) {
-            context.fillRect(this.realPlayerX + PIXEL_SIZE * 3, this.realPlayerY - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3);
-            return context.fillRect(this.realPlayerX + PIXEL_SIZE * 4, this.realPlayerY - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
+      drawPlayer = function(player) {
+        var player_x, player_y, _ref;
+        if (player === this.controlled) {
+          context.fillStyle = COLOR_SELF;
+        } else {
+          context.fillStyle = COLOR_ENEMY;
+        }
+        _ref = transformCoords(player.x, player.y), player_x = _ref[0], player_y = _ref[1];
+        context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
+        if (player.shooting) {
+          if (player.direction.shoot.up) {
+            context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE * 5, PIXEL_SIZE * 3, PIXEL_SIZE);
+            return context.fillRect(player_x, player_y - PIXEL_SIZE * 6, PIXEL_SIZE, PIXEL_SIZE);
+          } else if (player.direction.shoot.down) {
+            context.fillRect(player_x - PIXEL_SIZE, player_y + PIXEL_SIZE * 1, PIXEL_SIZE * 3, PIXEL_SIZE);
+            return context.fillRect(player_x, player_y + PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
+          } else if (player.direction.shoot.left) {
+            context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3);
+            return context.fillRect(player_x - PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
+          } else if (player.direction.shoot.right) {
+            context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE * 3);
+            return context.fillRect(player_x + PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE);
           }
         }
       };
@@ -155,6 +168,12 @@
           }
         }
         return null;
+      };
+      transformCoords = function(x, y) {
+        var tx, ty;
+        tx = ((x - this.controlled.x) * PIXEL_SIZE) + this.relativeX;
+        ty = ((y - this.controlled.y) * PIXEL_SIZE) + this.relativeY;
+        return [tx, ty];
       };
       resize();
       return draw();
