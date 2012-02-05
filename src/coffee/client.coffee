@@ -44,6 +44,8 @@ if window['WebSocket']
         server.on 'game.step', (data) ->
           gamePlayers = data.players
           gameBullets = data.bullets
+          
+          gameWorld[change.x][change.y] = 0 for change in data.changes
 
         server.on 'game.init', (data) ->
           gameWorld = data.world

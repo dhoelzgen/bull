@@ -35,8 +35,16 @@
         });
         return server.on('connect', function() {
           server.on('game.step', function(data) {
+            var change, _i, _len, _ref, _results;
             gamePlayers = data.players;
-            return gameBullets = data.bullets;
+            gameBullets = data.bullets;
+            _ref = data.changes;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              change = _ref[_i];
+              _results.push(gameWorld[change.x][change.y] = 0);
+            }
+            return _results;
           });
           return server.on('game.init', function(data) {
             gameWorld = data.world;

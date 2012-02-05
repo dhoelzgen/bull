@@ -1,6 +1,7 @@
 module.exports = class
   constructor: (@width, @height) ->
     @world = []
+    @changelist = []
 
     randomHeight = 200
     randomLow = 400
@@ -32,12 +33,20 @@ module.exports = class
   data: ->
     return @world
 
+  
   get: (x, y) ->
     return 1 if x < 0 or y < 0 or x > (@width - 1) or y > (@height - 1)
     return @world[x][y]
 
   hit: (x, y) ->
-    return null
+    return if x < 0 or y < 0 or x > (@width - 1) or y > (@height - 1)
+
+    if @world[x][y] == 1
+      @world[x][y] = 0
+      @changelist.push { x: x, y: y }
+
+  resetChangeList: ->
+    @changelist = []
 
   nextSpawnPoint: ->
     x = parseInt(Math.random() * @width)

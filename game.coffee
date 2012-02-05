@@ -144,7 +144,10 @@ module.exports = class
     @io.sockets.emit "game.step", {
       players: playerData
       bullets: bulletData
+      changes: @world.changelist
     }
+
+    @world.resetChangeList()
 
     setTimeout =>
       @.nextCycle()
