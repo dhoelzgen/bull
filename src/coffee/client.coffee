@@ -1,6 +1,6 @@
 if window['WebSocket']
   
-  PIXEL_SIZE = 4
+  PIXEL_SIZE = 5
   COLOR_SELF = 'rgb(42,83,145)'
   COLOR_ENEMY = 'rgb(218,0,0)'
 
@@ -100,22 +100,27 @@ if window['WebSocket']
 
       [player_x, player_y] = transformCoords(player.x, player.y)
 
-      context.fillRect(player_x - PIXEL_SIZE * 2, player_y  - PIXEL_SIZE * 2, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
+      if player_x > @clippingX and player_x < (@clippingX + @clippingWidth) and player_y > @clippingY and player_y < (@clippingY + @clippingHeight)
+        context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE, PIXEL_SIZE * 3 , PIXEL_SIZE * 3)
 
-      # Draw fireing indicator
-      if player.shooting
-        if player.direction.shoot.up
-          context.fillRect(player_x - PIXEL_SIZE * 2, player_y  - PIXEL_SIZE * 4, PIXEL_SIZE * 3 , PIXEL_SIZE)
-          context.fillRect(player_x - PIXEL_SIZE * 1, player_y  - PIXEL_SIZE * 5, PIXEL_SIZE, PIXEL_SIZE)
-        else if player.direction.shoot.down
-          context.fillRect(player_x - PIXEL_SIZE * 2, player_y  + PIXEL_SIZE * 2, PIXEL_SIZE * 3 , PIXEL_SIZE)
-          context.fillRect(player_x - PIXEL_SIZE * 1, player_y  + PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE)
-        else if player.direction.shoot.left
-          context.fillRect(player_x - PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE * 3)
-          context.fillRect(player_x - PIXEL_SIZE * 5, player_y - PIXEL_SIZE * 1, PIXEL_SIZE, PIXEL_SIZE)
-        else if player.direction.shoot.right
-          context.fillRect(player_x + PIXEL_SIZE * 2, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE * 3)
-          context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 1, PIXEL_SIZE, PIXEL_SIZE)
+        # Draw fireing indicator
+        if player.shooting
+          if player.direction.shoot.up
+            context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE * 3, PIXEL_SIZE * 3 , PIXEL_SIZE)
+            context.fillRect(player_x, player_y  - PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE)
+          else if player.direction.shoot.down
+            context.fillRect(player_x - PIXEL_SIZE , player_y  + PIXEL_SIZE * 3, PIXEL_SIZE * 3 , PIXEL_SIZE)
+            context.fillRect(player_x, player_y  + PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE)
+          else if player.direction.shoot.left
+            context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3)
+            context.fillRect(player_x - PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE)
+          else if player.direction.shoot.right
+            context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3)
+            context.fillRect(player_x + PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE)
+      
+      else
+        context.fillRect(player_x - PIXEL_SIZE, player_y  - PIXEL_SIZE, PIXEL_SIZE * 1 , PIXEL_SIZE * 1)
+        
 
 
     drawMap = ->

@@ -1,7 +1,7 @@
 (function() {
   var COLOR_ENEMY, COLOR_SELF, PIXEL_SIZE;
   if (window['WebSocket']) {
-    PIXEL_SIZE = 4;
+    PIXEL_SIZE = 5;
     COLOR_SELF = 'rgb(42,83,145)';
     COLOR_ENEMY = 'rgb(218,0,0)';
     $(document).ready(function() {
@@ -109,20 +109,20 @@
           context.fillStyle = COLOR_ENEMY;
         }
         _ref = transformCoords(player.x, player.y), player_x = _ref[0], player_y = _ref[1];
-        context.fillRect(player_x - PIXEL_SIZE * 2, player_y - PIXEL_SIZE * 2, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
+        context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE, PIXEL_SIZE * 3, PIXEL_SIZE * 3);
         if (player.shooting) {
           if (player.direction.shoot.up) {
-            context.fillRect(player_x - PIXEL_SIZE * 2, player_y - PIXEL_SIZE * 4, PIXEL_SIZE * 3, PIXEL_SIZE);
-            return context.fillRect(player_x - PIXEL_SIZE * 1, player_y - PIXEL_SIZE * 5, PIXEL_SIZE, PIXEL_SIZE);
+            context.fillRect(player_x - PIXEL_SIZE, player_y - PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE);
+            return context.fillRect(player_x, player_y - PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE);
           } else if (player.direction.shoot.down) {
-            context.fillRect(player_x - PIXEL_SIZE * 2, player_y + PIXEL_SIZE * 2, PIXEL_SIZE * 3, PIXEL_SIZE);
-            return context.fillRect(player_x - PIXEL_SIZE * 1, player_y + PIXEL_SIZE * 3, PIXEL_SIZE, PIXEL_SIZE);
+            context.fillRect(player_x - PIXEL_SIZE, player_y + PIXEL_SIZE * 3, PIXEL_SIZE * 3, PIXEL_SIZE);
+            return context.fillRect(player_x, player_y + PIXEL_SIZE * 4, PIXEL_SIZE, PIXEL_SIZE);
           } else if (player.direction.shoot.left) {
-            context.fillRect(player_x - PIXEL_SIZE * 4, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE * 3);
-            return context.fillRect(player_x - PIXEL_SIZE * 5, player_y - PIXEL_SIZE * 1, PIXEL_SIZE, PIXEL_SIZE);
+            context.fillRect(player_x - PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3);
+            return context.fillRect(player_x - PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE);
           } else if (player.direction.shoot.right) {
-            context.fillRect(player_x + PIXEL_SIZE * 2, player_y - PIXEL_SIZE * 2, PIXEL_SIZE, PIXEL_SIZE * 3);
-            return context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE * 1, PIXEL_SIZE, PIXEL_SIZE);
+            context.fillRect(player_x + PIXEL_SIZE * 3, player_y - PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE * 3);
+            return context.fillRect(player_x + PIXEL_SIZE * 4, player_y, PIXEL_SIZE, PIXEL_SIZE);
           }
         }
       };

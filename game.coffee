@@ -9,7 +9,7 @@ module.exports = class
     @nextId = 1
 
   go: ->
-    @world = new World 1500, 500
+    @world = new World 1500, 600
 
     @io.sockets.on "connection", (client) =>
       @.addClient client
@@ -58,10 +58,14 @@ module.exports = class
     if player.move.down  then newY += 1
 
     free = true
-    free = false if @world.get( newX, newY ) == 1
+    
+    for i in [-1..1]
+      for j in [-1..1]
+        free = false if @world.get( newX + i, newY + j) == 1
 
     for other in @players
-      free = false if other.x == newX and other.y == newY
+      unless other is player
+        free = false if Math.abs(other.x - newX) < 3 and Math.abs(other.y - newY) < 3
 
     if free
       player.x = newX
