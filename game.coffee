@@ -54,23 +54,39 @@ module.exports = class
     newX = player.x
     newY = player.y
 
-    if player.move.up then newY -= 1
     if player.move.left  then newX -= 1
     if player.move.right  then newX += 1
+    if player.move.up then newY -= 1
     if player.move.down  then newY += 1
+
+    # X
 
     free = true
     
     for i in [-1..1]
       for j in [-1..1]
-        free = false if @world.get( newX + i, newY + j) > 0
+        free = false if @world.get( newX + i, player.y + j) > 0
 
     for other in @players
       unless other is player
-        free = false if Math.abs(other.x - newX) < 3 and Math.abs(other.y - newY) < 3
+        free = false if Math.abs(other.x - newX) < 3 and Math.abs(other.y - player.y) < 3
 
     if free
       player.x = newX
+
+    # Y
+
+    free = true
+    
+    for i in [-1..1]
+      for j in [-1..1]
+        free = false if @world.get( player.x + i, newY + j) > 0
+
+    for other in @players
+      unless other is player
+        free = false if Math.abs(other.x - player.x) < 3 and Math.abs(other.y - newY) < 3
+
+    if free
       player.y = newY
 
   resurrectPlayer: (player) ->
