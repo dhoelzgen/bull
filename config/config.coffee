@@ -12,5 +12,5 @@ exports.env[currentEnv] = true
 
 if currentEnv == "development"
   exports.server =
-    host: "192.168.2.113"
+    host: "dhmbpro.local"
     port: 3030

@@ -160,10 +160,6 @@ if window['WebSocket']
           
           realY += PIXEL_SIZE
         realX += PIXEL_SIZE
-
-
-
-    
     
     resize = ->
       context.canvas.width = window.innerWidth
