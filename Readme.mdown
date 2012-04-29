@@ -2,7 +2,7 @@
 
 A little test for a canvas / websockets based game with destructible environment. Currently in beta, still much features to add.
 
-See it in action at (bull.9elements.com)[http://bull.9elements.com/]
+See it in action at [bull.9elements.com](http://bull.9elements.com/)
 
 # Installation
 
