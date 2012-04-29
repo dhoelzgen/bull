@@ -1,1 +1,16 @@
-*Pre-alpha state, instructions will be added as soon as it get's playable. Could take a while...*
+*Currently in beta*
+
+A little test for a canvas / websockets based game with destructible environment. Currently in beta, still much features to add.
+
+See it in action at (bull.9elements.com)[http://bull.9elements.com/]
+
+# Installation
+
+* Clone the repository
+* Get the modules: `npm install`
+* Launch the server: `coffee server.coffee`
+* Open your broser on 127.0.0.1:3000
+
+# Contribution
+
+* Feel free to contribute: Fork it, add your stuff and send me a pull request.
