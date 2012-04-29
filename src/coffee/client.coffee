@@ -1,6 +1,6 @@
 if window['WebSocket']
   
-  PIXEL_SIZE = 5
+  PIXEL_SIZE = 12
 
   COLOR_SELF = '#3d700a'
   COLOR_ENEMY = '#498d05'
@@ -10,6 +10,31 @@ if window['WebSocket']
   COLOR_CLEAN = '#304818'
 
   $(document).ready ->
+
+    soundManager.url = '/swfs/'
+
+    soundManager.onready ->
+      soundManager.createSound
+        id: 'background'
+        url: ['/sounds/background.mp3']
+        autoLoad: true
+        autoPlay: true
+
+      soundManager.createSound
+        id: 'shoot'
+        url: ['/sounds/shoot.mp3']
+        autoLoad: true
+
+      soundManager.createSound
+        id: 'hit'
+        url: ['/sounds/hit.mp3']
+        autoLoad: true
+
+      soundManager.createSound
+        id: 'envhit'
+        url: ['/sounds/envhit.mp3']
+        autoLoad: true
+
     server = null
 
     canvas = $('#game')
@@ -49,6 +74,10 @@ if window['WebSocket']
           gameBullets = data.bullets
           
           gameWorld[change.x][change.y] = 0 for change in data.changes
+          
+          for sound in ['shoot', 'envhit', 'hit']
+            if data.sounds[sound] is true
+              soundManager.play sound
 
         server.on 'game.init', (data) ->
           gameWorld = data.world

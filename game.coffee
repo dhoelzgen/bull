@@ -95,7 +95,12 @@ module.exports = class
       player.resurrect x, y
 
   nextCycle: ->
-    
+   
+    sounds =
+      shoot: false
+      hit: false
+      envhit: false
+
     # Move & Shoot
 
     for player in @players
@@ -108,12 +113,14 @@ module.exports = class
 
 
       if player.shooting and player.cooldown == 0
+        sounds.shoot = true
         @bullets.push player.getBullet()
     
     # Die
 
     checkCollision = (playerId, x,y) =>
       if @world.get(x,y) > 0
+        sounds.envhit = true
         @world.hit(x,y)
         return true
       else
@@ -123,6 +130,7 @@ module.exports = class
               for j in [-1..1]
                 if player.x == (x + i) and player.y == (y + j)
                   player.hit()
+                  sounds.hit = true
                   return true
 
       return false
@@ -139,7 +147,6 @@ module.exports = class
           collision = true if checkCollision(bullet.playerId, bullet.x, i)
 
       remainingBullets.push( bullet ) unless collision
-
     
     bulletData = []
 
@@ -161,6 +168,7 @@ module.exports = class
       players: playerData
       bullets: bulletData
       changes: @world.changelist
+      sounds: sounds
     }
 
     @world.resetChangeList()

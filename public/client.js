@@ -1,7 +1,7 @@
 (function() {
   var COLOR_BULLET, COLOR_CLEAN, COLOR_DEAD, COLOR_ENEMY, COLOR_OBSTACLE, COLOR_SELF, PIXEL_SIZE;
   if (window['WebSocket']) {
-    PIXEL_SIZE = 5;
+    PIXEL_SIZE = 12;
     COLOR_SELF = '#3d700a';
     COLOR_ENEMY = '#498d05';
     COLOR_DEAD = '#253008';
@@ -10,6 +10,30 @@
     COLOR_CLEAN = '#304818';
     $(document).ready(function() {
       var cHeight, cWidth, canvas, connect, context, draw, drawBullets, drawMap, drawPlayer, gameBullets, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
+      soundManager.url = '/swfs/';
+      soundManager.onready(function() {
+        soundManager.createSound({
+          id: 'background',
+          url: ['/sounds/background.mp3'],
+          autoLoad: true,
+          autoPlay: true
+        });
+        soundManager.createSound({
+          id: 'shoot',
+          url: ['/sounds/shoot.mp3'],
+          autoLoad: true
+        });
+        soundManager.createSound({
+          id: 'hit',
+          url: ['/sounds/hit.mp3'],
+          autoLoad: true
+        });
+        return soundManager.createSound({
+          id: 'envhit',
+          url: ['/sounds/envhit.mp3'],
+          autoLoad: true
+        });
+      });
       server = null;
       canvas = $('#game');
       context = canvas.get(0).getContext('2d');
@@ -37,14 +61,19 @@
         });
         return server.on('connect', function() {
           server.on('game.step', function(data) {
-            var change, _i, _len, _ref, _results;
+            var change, sound, _i, _j, _len, _len2, _ref, _ref2, _results;
             gamePlayers = data.players;
             gameBullets = data.bullets;
             _ref = data.changes;
-            _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               change = _ref[_i];
-              _results.push(gameWorld[change.x][change.y] = 0);
+              gameWorld[change.x][change.y] = 0;
+            }
+            _ref2 = ['shoot', 'envhit', 'hit'];
+            _results = [];
+            for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+              sound = _ref2[_j];
+              _results.push(data.sounds[sound] === true ? soundManager.play(sound) : void 0);
             }
             return _results;
           });
