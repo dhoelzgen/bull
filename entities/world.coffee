@@ -157,7 +157,8 @@ module.exports = class
     for coord in collateralCoords
       _x = coord[0]
       _y = coord[1]
-      if @world[_x][_y] != undefined
+
+      if @world[_x] and @world[_x][_y] != undefined
 
         if @world[_x][_y] > 0
           @world[_x][_y] -= 1
