@@ -144,16 +144,27 @@ module.exports = class
   get: (x, y) ->
     return 1 if x < 0 or y < 0 or x > (@width - 1) or y > (@height - 1)
     return @world[x][y]
-
-  hit: (x, y) ->
+    
+  hit: (bullet, x, y) ->
     return if x < 0 or y < 0 or x > (@width - 1) or y > (@height - 1)
+    return if @world[x][y] < 1
+    
+    if !bullet 
+      collateralCoords = [[x,y]]
+    else
+      collateralCoords = bullet.getFieldOfDamageAt(x, y)
+      
+    for coord in collateralCoords
+      _x = coord[0]
+      _y = coord[1]
+      if @world[_x][_y] != undefined
 
-    if @world[x][y] > 0
-      @world[x][y] -= 1
-
-      if @world[x][y] == 0
-        @world[x][y] = 0
-        @changelist.push { x: x, y: y }
+        if @world[_x][_y] > 0
+          @world[_x][_y] -= 1
+          
+        if @world[_x][_y] == 0
+          co = {x: _x, y: _y}
+          @changelist.push { x: _x, y: _y }
 
   resetChangeList: ->
     @changelist = []
