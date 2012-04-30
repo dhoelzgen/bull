@@ -118,10 +118,10 @@ module.exports = class
     
     # Die
 
-    checkCollision = (playerId, x,y) =>
+    checkCollision = (bullet, playerId, x, y) =>
       if @world.get(x,y) > 0
         sounds.envhit = true
-        @world.hit(x,y)
+        @world.hit(bullet, x, y)
         return true
       else
         for player in @players
@@ -141,10 +141,10 @@ module.exports = class
       collision = false
       if bullet.trajY == 0
         for i in [bullet.x..(bullet.x + bullet.trajX)]
-          collision = true if checkCollision(bullet.playerId, i, bullet.y)
+          collision = true if checkCollision(bullet, bullet.playerId, i, bullet.y)
       else
         for i in [bullet.y..(bullet.y + bullet.trajY)]
-          collision = true if checkCollision(bullet.playerId, bullet.x, i)
+          collision = true if checkCollision(bullet, bullet.playerId, bullet.x, i)
 
       remainingBullets.push( bullet ) unless collision
     
