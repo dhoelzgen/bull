@@ -1,7 +1,15 @@
 Bullet = require('./bullet')
 
-COOLDOWN = 7
-BULLET_SPEED = 2
+weaponData =
+  laser:
+    cooldown: 7
+    speed: 2
+    radius: 1
+  rocket:
+    cooldown: 20
+    speed: 1
+    radius: 3
+
 HITPOINTS = 5
 
 module.exports = class
@@ -23,6 +31,7 @@ module.exports = class
     @shooting = false
     @dead = false
     @hitpoints = HITPOINTS
+    @weapon = 'laser'
 
     @cooldown = 0
 
@@ -64,17 +73,17 @@ module.exports = class
     tY = 0
 
     if @shoot.left
-      tX = -BULLET_SPEED
+      tX = -weaponData[@weapon].speed
     else if @shoot.up
-      tY = -BULLET_SPEED
+      tY = -weaponData[@weapon].speed
     else if @shoot.right
-      tX = BULLET_SPEED
+      tX = weaponData[@weapon].speed
     else if @shoot.down
-      tY = BULLET_SPEED
+      tY = weaponData[@weapon].speed
 
-    @cooldown = COOLDOWN
+    @cooldown = weaponData[@weapon].cooldown
 
-    return new Bullet(@id, bX, bY, tX, tY)
+    return new Bullet(@id, bX, bY, tX, tY, weaponData[@weapon].radius)
 
   addMoveDirection: (direction) ->
     @move[direction] = true
@@ -82,8 +91,9 @@ module.exports = class
   removeMoveDirection: (direction) ->
     @move[direction] = false
 
-  startShooting: ->
+  startShooting: (weapon)  ->
     if @.isMoving() is true and @shooting is false
+      
       # Only one direction allowed atm
       @shoot = {
         left: false
@@ -101,6 +111,7 @@ module.exports = class
       else
         @shoot.down = true
     
+    @weapon = weapon
     @shooting = true
 
   stopShooting: ->

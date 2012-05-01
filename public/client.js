@@ -9,7 +9,7 @@
     COLOR_OBSTACLE = '#253008';
     COLOR_CLEAN = '#304818';
     $(document).ready(function() {
-      var cHeight, cWidth, canvas, connect, context, draw, drawBullets, drawMap, drawPlayer, gameBullets, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, transformCoords;
+      var cHeight, cWidth, canvas, connect, context, currentWeapon, draw, drawBullets, drawMap, drawPlayer, gameBullets, gameId, gamePlayers, gameWorld, getPlayer, redraw, resize, sendMove, sendShoot, sendStop, sendStopShooting, server, setWeapon, transformCoords;
       soundManager.url = '/swfs/';
       soundManager.onready(function() {
         soundManager.createSound({
@@ -41,8 +41,12 @@
       gameBullets = null;
       gamePlayers = [];
       gameId = null;
+      currentWeapon = 'laser';
       cWidth = 0;
       cHeight = 0;
+      setWeapon = function(weapon) {
+        return currentWeapon = weapon;
+      };
       sendMove = function(direction) {
         return server.emit('action.move', direction);
       };
@@ -50,7 +54,7 @@
         return server.emit('action.stop', direction);
       };
       sendShoot = function() {
-        return server.emit('action.shoot', null);
+        return server.emit('action.shoot', currentWeapon);
       };
       sendStopShooting = function() {
         return server.emit('action.stopShooting', null);
@@ -101,6 +105,10 @@
             return sendMove('down');
           case 32:
             return sendShoot();
+          case 76:
+            return setWeapon('laser');
+          case 82:
+            return setWeapon('rocket');
         }
       });
       $(document).keyup(function(event) {

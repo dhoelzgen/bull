@@ -32,8 +32,9 @@ module.exports = class
     client.on "action.stop", (direction) ->
       player.removeMoveDirection direction
 
-    client.on "action.shoot", ->
-      player.startShooting()
+    client.on "action.shoot", (weapon) ->
+      return unless ['laser', 'rocket'].indexOf(weapon) isnt -1
+      player.startShooting(weapon)
 
     client.on "action.stopShooting", ->
       player.stopShooting()
@@ -46,7 +47,7 @@ module.exports = class
     client.emit "game.init", {
       world: @world.data()
       id: player.id
-      count: @players.length  
+      count: @players.length
     }
 
   movePlayer: (player) ->

@@ -2,8 +2,7 @@ Shapes = require('./shapes')
 
 module.exports = class
 
-  constructor: (@playerId, @x, @y, @trajX, @trajY) ->
-    @damageRadius = 6
+  constructor: (@playerId, @x, @y, @trajX, @trajY, @damageRadius) ->
 
   data: ->
     return {

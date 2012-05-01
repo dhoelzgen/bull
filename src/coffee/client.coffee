@@ -47,10 +47,15 @@ if window['WebSocket']
     gamePlayers = []
     gameId = null
 
+    currentWeapon = 'laser'
+
     # Cache
 
     cWidth = 0
     cHeight = 0
+
+    setWeapon = (weapon) ->
+      currentWeapon = weapon
     
     sendMove = (direction) ->
       server.emit('action.move', direction)
@@ -59,7 +64,7 @@ if window['WebSocket']
       server.emit('action.stop', direction)
 
     sendShoot = ->
-      server.emit('action.shoot', null)
+      server.emit('action.shoot', currentWeapon)
 
     sendStopShooting = ->
       server.emit('action.stopShooting', null)
@@ -94,6 +99,8 @@ if window['WebSocket']
         when 39 then sendMove 'right'
         when 40 then sendMove 'down'
         when 32 then sendShoot()
+        when 76 then setWeapon('laser')
+        when 82 then setWeapon('rocket')
 
     $(document).keyup (event) ->
       return unless server
